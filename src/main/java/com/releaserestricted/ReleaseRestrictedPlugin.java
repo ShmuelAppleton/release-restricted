@@ -2,6 +2,8 @@ package com.releaserestricted;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
+
+import com.releaserestricted.Util.Http;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -12,6 +14,8 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
+import java.util.Map;
+
 @Slf4j
 @PluginDescriptor(
 	name = "Release Restricted"
@@ -20,13 +24,16 @@ public class ReleaseRestrictedPlugin extends Plugin
 {
 	@Inject
 	private Client client;
-
 	@Inject
 	private ReleaseRestrictedConfig config;
+
+	private Map<Integer, String> itemNames;
+
 
 	@Override
 	protected void startUp() throws Exception
 	{
+		itemNames = Http.getItemNames();
 		//log.info("Example started!");
 	}
 
