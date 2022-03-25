@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class Http {
 
-    public static String runeliteversion = "1.8.15.1";
+    private static String runeliteVersion = net.runelite.client.RuneLiteProperties.getVersion();
 
     public static OkHttpClient client = RuneLiteAPI.CLIENT;
 
@@ -44,7 +44,7 @@ public class Http {
                 new HttpUrl.Builder()
                         .scheme("https")
                         .host("api.runelite.net")
-                        .addPathSegment(runeliteversion)
+                        .addPathSegment(runeliteVersion)
                         .addPathSegment("item")
                         .addPathSegment("prices.js");
 
