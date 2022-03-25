@@ -1,19 +1,22 @@
 package com.releaserestricted;
 
+import com.releaserestricted.Util.YearOptions;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("example")
+import java.time.Year;
+
+@ConfigGroup("Release-Restricted")
 public interface ReleaseRestrictedConfig extends Config
 {
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
+			position = 0,
+			keyName = "yearSelector",
+			name = "Year",
+			description = "The final year of approved content"
 	)
-	default String greeting()
-	{
-		return "Hello";
+	default YearOptions year() {
+		return YearOptions._2005;
 	}
 }
