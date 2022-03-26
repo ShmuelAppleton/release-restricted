@@ -25,10 +25,12 @@ public class Http {
     public static OkHttpClient client = RuneLiteAPI.CLIENT;
     private static Document doc;
 
-    public static CompletableFuture<ReleaseDate> getReleaseDateByName(String name) {
+    public static CompletableFuture<ReleaseDate> getReleaseDateByName(String name, int id) {
         CompletableFuture<ReleaseDate> future = new CompletableFuture<>();
 
         String url = getWikiUrl(name);
+        url = url + disambiguate(id);
+
 
         requestAsync(url).whenCompleteAsync((responseHTML, ex) -> {
             doc = Jsoup.parse(responseHTML);
@@ -40,6 +42,57 @@ public class Http {
             future.complete(date);
         });
         return future;
+    }
+
+    public static String disambiguate(int id){
+        String newName = "";
+        switch(id){
+            case 2813:
+            case 2814:
+                newName = "_(Lumbridge)";
+                break;
+            case 2816:
+            case 2815:
+                newName = "_(Varrock)";
+                break;
+            case 2817:
+            case 2818:
+                newName = "_(Al_Kharid)";
+                break;
+            case 2819:
+            case 2820:
+                newName = "_(Falador)";
+                break;
+            case 2821:
+            case 2822:
+                newName = "_(Edgeville)";
+                break;
+            case 2823:
+            case 2824:
+                newName = "_(Rimmington)";
+                break;
+            case 2825:
+            case 2826:
+                newName = "_(Musa_Point)";
+                break;
+            case 2884:
+            case 2885:
+                newName = "_(Varrock_Swordshop)";
+                break;
+            case 2894:
+                newName = "_(Combat_Training_Camp)";
+                break;
+            case 7769:
+                newName = "_(Fossil_Island)";
+                break;
+            case 2888:
+                newName = "_(Port_Khazard)";
+                break;
+            case 7913:
+                newName = "_(The_Warrens)";
+                break;
+        }
+        return newName;
     }
 
     public static String sanitizeName(String name) {
@@ -69,8 +122,6 @@ public class Http {
         } catch (IOException e) {
             System.out.println("Error getting item names");
         }
-        System.out.println("item names retrieved");
-        System.out.println(itemNames.get(526));
         return itemNames;
     }
 

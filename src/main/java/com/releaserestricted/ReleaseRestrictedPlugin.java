@@ -51,6 +51,7 @@ public class ReleaseRestrictedPlugin extends Plugin
 	{
 		itemNames = Http.getItemNames();
 		itemNames.put(995, "Coins");
+		ChatNotifications.configNotification(config, chatMessageManager);
 	}
 
 	@Subscribe
@@ -70,13 +71,10 @@ public class ReleaseRestrictedPlugin extends Plugin
 		if (!isChecked){
 			checkedItems.add(itemId);
 			if (itemName != null) {
-				System.out.println(itemId + " item id " + itemName + " being checked");
-				Http.getReleaseDateByName(itemName).whenCompleteAsync((date, ex) -> {
+				Http.getReleaseDateByName(itemName, itemId).whenCompleteAsync((date, ex) -> {
 					if (date.getYear() <= Integer.parseInt(config.year().toString())) {
 						approvedItems.add(itemId);
-						System.out.println(itemId + " item id approved");
 					}
-					System.out.println(itemId + " item id mapping date " + date.getDate());
 					itemReleaseDates.put(itemId, date);
 				});
 			}
@@ -87,6 +85,7 @@ public class ReleaseRestrictedPlugin extends Plugin
 	public void onNpcSpawned(NpcSpawned event){
 		int npcId = event.getNpc().getId();
 		String npcName = event.getNpc().getName();
+
 		boolean isChecked = false;
 		boolean isApproved = false;
 		if (!checkedNpcs.isEmpty()){
@@ -99,7 +98,7 @@ public class ReleaseRestrictedPlugin extends Plugin
 		}
 		if (!isChecked){
 			checkedNpcs.add(npcId);
-			Http.getReleaseDateByName(npcName).whenCompleteAsync(( date, ex) -> {
+			Http.getReleaseDateByName(npcName, npcId).whenCompleteAsync(( date, ex) -> {
 				if (date.getYear() <= Integer.parseInt(config.year().toString())) {
 					approvedNpcs.add(npcId);
 				}
@@ -122,11 +121,10 @@ public class ReleaseRestrictedPlugin extends Plugin
 			int id = event.getId();
 			if (id < cachedNPCs.length) {
 				NPC target = cachedNPCs[id];
-
 				if (!approvedNpcs.contains(target.getId())) {
 					event.consume();
 					String releaseDate = "";
-					if(npcReleaseDates.get(target.getId()).getDate() != null) {
+					if(npcReleaseDates.get(target.getId()) != null) {
 						releaseDate = npcReleaseDates.get(target.getId()).getDate();
 					}
 					ChatNotifications.sendChatNotification("This npc has not yet been released! Release Date: " + releaseDate, chatMessageManager);
@@ -152,7 +150,7 @@ public class ReleaseRestrictedPlugin extends Plugin
 
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event) {
-		if (event.getGroup().equals("Release-Restricted")) {
+		if (event.getGroup().equals("Release-Restricted") && event.getKey().equals("yearSelector")) {
 			refresh();
 			ChatNotifications.configNotification(config, chatMessageManager);
 		}
@@ -188,6 +186,7 @@ public class ReleaseRestrictedPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		ChatNotifications.sendChatNotification("Content is now unrestricted", chatMessageManager);
 	}
 
 	@Subscribe
@@ -195,7 +194,7 @@ public class ReleaseRestrictedPlugin extends Plugin
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
 		{
-			ChatNotifications.configNotification(config, chatMessageManager);
+			//ChatNotifications.configNotification(config, chatMessageManager);
 		}
 	}
 
